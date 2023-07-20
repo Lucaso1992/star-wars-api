@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, json
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
@@ -49,10 +49,20 @@ def handle_hello():
 @app.route('/people', methods=['GET'])
 def load_character():
     character_query = Character.query.all()
-    load_character = map(lambda item : item.serialize(), character_query)
+    load_character = list(map(lambda item : item.serialize(), character_query))
     response_body = {
         "msg": "Ok",
         "result": load_character
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/people/<int:people_id>', methods=['GET'])
+def people_id(people_id):
+    people_query = Character.query.filter_by(id = people_id ).first()
+    response_body = {
+        "msg": "Ok",
+        "result": people_query
     }
 
     return jsonify(response_body), 200

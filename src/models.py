@@ -75,7 +75,7 @@ class Vehicle(db.Model):
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    url = db.Column(db.String)https://caniuse.com/
+    url = db.Column(db.String)
     height = db.Column(db.Integer, nullable=False)
     mass = db.Column(db.Integer, nullable=False)
     hair_color = db.Column(db.String, nullable=False)
@@ -86,7 +86,7 @@ class Character(db.Model):
     homeworld = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime)
     edited = db.Column(db.DateTime)
-    favorite = db.relationship("Favorite", backref="character", lazy=True)
+    favorite = db.relationship("Favorites", backref="character", lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.id
@@ -94,7 +94,18 @@ class Character(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "name": self.name,
+            "url": self.url,
+            "height": self.height,
+            "mass": self.mass,
+            "hair_color": self.hair_color,
+            "skin_color": self.skin_color,
+            "eye_color": self.eye_color,
+            "birth_year": self.birth_year,
+            "gender": self.gender,
+            "homeworld": self.homeworld,
+            "created": self.created,
+            "edited": self.edited,
             # do not serialize the password, its a security breach
         }
 
