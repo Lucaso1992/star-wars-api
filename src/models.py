@@ -7,6 +7,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    favorite = db.relationship("Favorites", backref="user", lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -33,10 +34,19 @@ class Planet(db.Model):
     terrain = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
     edited = db.Column(db.DateTime, nullable=False)
-    
+    favorite = db.relationship("Favorites", backref="planet", lazy=True)
 
+    def __repr__(self):
+        return '<User %r>' % self.username
 
-class Vehicle(Base):
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
+
+class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, unique=True)
     url = db.Column(db.String, nullable=False, unique=True)
@@ -50,32 +60,22 @@ class Vehicle(Base):
     vehicle_class = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime, nullable=False)
     edited = db.Column(db.DateTime, nullable=False)
-    pilots = db.relationship('Pilots', secondary=pilots, lazy='subquery',
-        backref=db.backref('vehicle', lazy=True))
-    passengers = db.relationship('Passengers', secondary=passengers, lazy='subquery',
-        backref=db.backref('vehicle', lazy=True))
+    favorite = db.relationship("Favorites", backref="vehicle", lazy=True)
 
-   
-   
 
-pilots = db.Table(
-    "Pilots",
-    db.Column("id", db.Integer, primary_key=True),
-    db.Column("vehicle_id", db.ForeignKey(Vehicle.id)),
-    db.Column("pilot_id", db.ForeignKey(Character.id)),
-)
+    def __repr__(self):
+        return '<User %r>' % self.username
 
-passengers = db.Table(
-    "passengers",
-    db.Column("id", db.Integer, primary_key=True),
-    db.Column("vehicle_id", db.ForeignKey(Vehicle.id)),
-    db.Column("passenger_id", db.ForeignKey(Character.id)),
-)  
- 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
 class Character(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    url = db.Column(db.String)
+    url = db.Column(db.String)https://caniuse.com/
     height = db.Column(db.Integer, nullable=False)
     mass = db.Column(db.Integer, nullable=False)
     hair_color = db.Column(db.String, nullable=False)
@@ -86,3 +86,33 @@ class Character(db.Model):
     homeworld = db.Column(db.String, nullable=False)
     created = db.Column(db.DateTime)
     edited = db.Column(db.DateTime)
+    favorite = db.relationship("Favorite", backref="character", lazy=True)
+
+    def __repr__(self):
+        return '<User %r>' % self.id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
+
+
+class Favorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_fk = db.Column(db.Integer, db.ForeignKey("user.id"))
+    planet_fk = db.Column(db.Integer, db.ForeignKey("planet.id"))
+    vehicle_fk = db.Column(db.Integer, db.ForeignKey("vehicle.id"))
+    character_fk = db.Column(db.Integer, db.ForeignKey("character.id"))
+
+
+    def __repr__(self):
+        return '<User %r>' % self.id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
