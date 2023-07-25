@@ -67,7 +67,52 @@ def people_id(people_id):
 
     return jsonify(response_body), 200
 
+@app.route('/planets', methods=['GET'])
+def load_planet():
+    planet_query = Planet.query.all()
+    planet = list(map(lambda item : item.serialize(), planet_query))
+    response_body = {
+        "msg": "Ok",
+        "result": load_planet
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/planet/<int:planet_id>', methods=['GET'])
+def planet_id(planet_id):
+    planet_query = Planet.query.filter_by(id = planet_id ).first()
+    response_body = {
+        "msg": "Ok",
+        "result": planet_query
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/users', methods=['GET'])
+def load_user():
+    user_query = User.query.all()
+    user = list(map(lambda item : item.serialize(), user_query))
+    response_body = {
+        "msg": "Ok",
+        "result": load_user
+    }
+
+    return jsonify(response_body), 200
+
+
+@app.route('/users/favorites', methods=['GET'])
+def load_user_favorites():
+    user_favorites_query = User.Favorites.query.all()
+    user_favorites = list(map(lambda item : item.serialize(), user_favorites_query))
+    response_body = {
+        "msg": "Ok",
+        "result": load_user_favorites
+    }
+
+    return jsonify(response_body), 200
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
-    app.run(host='0.0.0.0', port=PORT, debug=False)
+    app.run(host='0.0.0.0', port=PORT, debug=False) 
