@@ -137,6 +137,36 @@ def create_user():
         return jsonify(response_body), 404
 
 
+@app.route('/planet', methods=['POST'])
+def create_planet():
+    request_body = request.json
+    planet_query = Planet.query.filter_by(name = request_body["name"]).first()
+    if planet_query is None:
+        create_planet = Planet(name = request_body["name"], url = request_body["url"], climate = request_body["climate"], 
+        created = request_body["created"], 
+        diameter = request_body["diameter"], 
+        gravity = request_body["gravity"], 
+        orbital_period = request_body["orbital_period"], 
+        population = request_body["population"],
+        rotation_period = request_body["rotation_period"],
+        surface_water = request_body["surface_water"],
+        terrain = request_body["terrain"],
+        edited = request_body["edited"],
+        favorite = request_body["favorite"],)
+        db.session.add(create_user)
+        db.session.commit()
+        response_body = {
+             "msg": "Usuario creado con exito"
+            }
+
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+             "msg": "Usuario ya existe"
+            }
+        return jsonify(response_body), 404
+
+
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
 def create_favorite_planet(planet_id):
     request_body = request.json

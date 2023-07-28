@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -10,12 +11,14 @@ class User(db.Model):
     favorite = db.relationship("Favorites", backref="user", lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.email
 
     def serialize(self):
         return {
             "id": self.id,
             "email": self.email,
+            "password": self.password,
+            "is_active": self.is_active,
             # do not serialize the password, its a security breach
         }
 
@@ -24,7 +27,7 @@ class Planet(db.Model):
     name = db.Column(db.String, nullable=False, unique=True)
     url = db.Column(db.String, nullable=False, unique=True)
     climate = db.Column(db.String, nullable=False)
-    created = db.Column(db.String, nullable=False)
+    created = db.Column(db.DateTime, nullable=False)
     diameter = db.Column(db.String, nullable=False)
     gravity = db.Column(db.String, nullable=False)
     orbital_period = db.Column(db.Integer, nullable=False)
@@ -32,17 +35,28 @@ class Planet(db.Model):
     rotation_period = db.Column(db.Integer, nullable=False)
     surface_water = db.Column(db.Integer, nullable=False)
     terrain = db.Column(db.String, nullable=False)
-    created = db.Column(db.DateTime, nullable=False)
     edited = db.Column(db.DateTime, nullable=False)
     favorite = db.relationship("Favorites", backref="planet", lazy=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<Planet %r>' % self.name
 
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "name": self.name,
+            "url": self.url,
+            "climate": self.climate,
+            "created": self.created,
+            "diameter": self.diameter,
+            "gravity": self.gravity,
+            "orbital_period": self.orbital_period,
+            "population": self.population,
+            "rotation_period": self.rotation_period,
+            "surface_water": self.surface_water,
+            "terrain": self.terrain,
+            "edited": self.edited
+            
             # do not serialize the password, its a security breach
         }
 
@@ -51,25 +65,34 @@ class Vehicle(db.Model):
     name = db.Column(db.String, nullable=False, unique=True)
     url = db.Column(db.String, nullable=False, unique=True)
     cargo_capacity = db.Column(db.Integer, nullable=False)
-    created = db.Column(db.String, nullable=False)
+    created = db.Column(db.DateTime, nullable=False)
     crew = db.Column(db.Integer, nullable=False)
     length = db.Column(db.String, nullable=False)
     manufacturer = db.Column(db.String, nullable=False)
     max_atmosphering_speed = db.Column(db.Integer, nullable=False)
     model = db.Column(db.String, nullable=False)
     vehicle_class = db.Column(db.String, nullable=False)
-    created = db.Column(db.DateTime, nullable=False)
     edited = db.Column(db.DateTime, nullable=False)
     favorite = db.relationship("Favorites", backref="vehicle", lazy=True)
 
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<Vehicle %r>' % self.name
 
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "name": self.name,
+            "url": self.url,
+            "cargo_capacity": self.cargo_capacity,
+            "created": self.created,
+            "crew": self.crew,
+            "manufacturer": self.manufacturer,
+            "max_atmosphering_speed": self.max_atmosphering_speed,
+            "model": self.model,
+            "vehicle_class": self.vehicle_class,
+            "edited": self.edited
+
             # do not serialize the password, its a security breach
         }
 class Character(db.Model):
@@ -84,12 +107,12 @@ class Character(db.Model):
     birth_year = db.Column(db.String, nullable=False)
     gender = db.Column(db.String, nullable=False)
     homeworld = db.Column(db.String, nullable=False)
-    created = db.Column(db.DateTime)
-    edited = db.Column(db.DateTime)
+    created = db.Column(db.DateTime, nullable=False)
+    edited = db.Column(db.DateTime, nullable=False)
     favorite = db.relationship("Favorites", backref="character", lazy=True)
-
+    
     def __repr__(self):
-        return '<User %r>' % self.id
+        return '<Character %r>' % self.id
 
     def serialize(self):
         return {
@@ -105,7 +128,7 @@ class Character(db.Model):
             "gender": self.gender,
             "homeworld": self.homeworld,
             "created": self.created,
-            "edited": self.edited,
+            "edited": self.edited
             # do not serialize the password, its a security breach
         }
 
@@ -119,11 +142,14 @@ class Favorites(db.Model):
 
 
     def __repr__(self):
-        return '<User %r>' % self.id
+        return '<Favorites %r>' % self.id
 
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "user_fk": self.user_fk,
+            "planet_fk": self.planet_fk,
+            "vehicle_fk": self.vehicle_fk,
+            "character_fk": self.character_fk
             # do not serialize the password, its a security breach
         }
