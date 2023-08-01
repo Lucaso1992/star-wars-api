@@ -134,7 +134,7 @@ def vehicle_id(vehicle_id):
 
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
 def load_user_favorites(user_id):
-    user_favorites_query = Favorites.query.filter_by(user_fk == user_id).all()
+    user_favorites_query = Favorites.query.filter_by(user_fk = user_id).all()
     user_favorites = list(map(lambda item : item.serialize(), user_favorites_query))
     response_body = {
         "msg": "Ok",
