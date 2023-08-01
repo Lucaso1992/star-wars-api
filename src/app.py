@@ -76,10 +76,17 @@ def load_character():
 @app.route('/people/<int:people_id>', methods=['GET'])
 def people_id(people_id):
     people_query = Character.query.filter_by(id = people_id ).first()
-    response_body = {
-        "msg": "Ok",
-        "result": people_query
-    }
+    if people_query:
+        response_body = {
+            "msg": "Character encontrado",
+            "result": people_query.serialize()
+        }
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+            "msg": "Character no existe!"
+        }
+        return jsonify(response_body), 404
 
     return jsonify(response_body), 200
 
@@ -89,7 +96,7 @@ def load_planet():
     planet = list(map(lambda item : item.serialize(), planet_query))
     response_body = {
         "msg": "Ok",
-        "result": load_planet
+        "result": planet
     }
 
     return jsonify(response_body), 200
@@ -97,12 +104,32 @@ def load_planet():
 @app.route('/planet/<int:planet_id>', methods=['GET'])
 def planet_id(planet_id):
     planet_query = Planet.query.filter_by(id = planet_id ).first()
-    response_body = {
-        "msg": "Ok",
-        "result": planet_query
-    }
+    if planet_query:
+        response_body = {
+            "msg": "Planeta encontrado",
+            "result": planet_query.serialize()
+        }
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+            "msg": "Planeta no existe!"
+        }
+        return jsonify(response_body), 404
 
-    return jsonify(response_body), 200
+@app.route('/vehicle/<int:vehicle_id>', methods=['GET'])
+def vehicle_id(vehicle_id):
+    vehicle_query = Vehicle.query.filter_by(id = vehicle_id ).first()
+    if vehicle_query:
+        response_body = {
+            "msg": "Vehicle encontrado",
+            "result": vehicle_query.serialize()
+        }
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+            "msg": "Vehicle no existe!"
+        }
+        return jsonify(response_body), 404
 
 
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
@@ -151,12 +178,11 @@ def create_planet():
         rotation_period = request_body["rotation_period"],
         surface_water = request_body["surface_water"],
         terrain = request_body["terrain"],
-        edited = request_body["edited"],
-        favorite = request_body["favorite"],)
-        db.session.add(create_user)
+        edited = request_body["edited"],)
+        db.session.add(create_planet)
         db.session.commit()
         response_body = {
-             "msg": "Usuario creado con exito"
+             "msg": "Planeta creado con exito"
             }
 
         return jsonify(response_body), 200
@@ -166,6 +192,58 @@ def create_planet():
             }
         return jsonify(response_body), 404
 
+@app.route('/vehicle', methods=['POST'])
+def create_vehicle():
+    request_body = request.json
+    vehicle_query = Vehicle.query.filter_by(name = request_body["name"]).first()
+    if vehicle_query is None:
+        create_vehicle = Vehicle(name = request_body["name"], url = request_body["url"], cargo_capacity = request_body["cargo_capacity"], 
+        created = request_body["created"], 
+        crew = request_body["crew"], 
+        length = request_body["length"], 
+        manufacturer = request_body["manufacturer"], 
+        max_atmosphering_speed = request_body["max_atmosphering_speed"],
+        model = request_body["model"],
+        vehicle_class = request_body["vehicle_class"],
+        edited = request_body["edited"],)
+        db.session.add(create_vehicle)
+        db.session.commit()
+        response_body = {
+             "msg": "Vehiculo creado con exito"
+            }
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+             "msg": "Vehiculo ya existe"
+            }
+        return jsonify(response_body), 404
+
+@app.route('/people', methods=['POST'])
+def create_character():
+    request_body = request.json
+    character_query = Character.query.filter_by(name = request_body["name"]).first()
+    if character_query is None:
+        create_character = Character(name = request_body["name"], url = request_body["url"], height = request_body["height"], 
+        mass = request_body["mass"], 
+        hair_color = request_body["hair_color"], 
+        skin_color = request_body["skin_color"], 
+        eye_color = request_body["eye_color"], 
+        birth_year = request_body["birth_year"],
+        gender = request_body["gender"],
+        homeworld = request_body["homeworld"],
+        created = request_body["created"],
+        edited = request_body["edited"],)
+        db.session.add(create_character)
+        db.session.commit()
+        response_body = {
+             "msg": "Character creado con exito"
+            }
+        return jsonify(response_body), 200
+    else:
+        response_body = {
+             "msg": "Character ya existe"
+            }
+        return jsonify(response_body), 404
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
 def create_favorite_planet(planet_id):
